@@ -33,12 +33,11 @@ def generate_pie_chart_kpi(title, value, id):
     figure = go.Figure(
         data=[
             go.Pie(
-                labels=["Value", "Remaining"],
                 values=[value, 100 - value],
                 marker=dict(colors=["#228b22", "#ff0000"]),
-                textinfo='label+percent',
+                textinfo='percent',
                 textposition='inside',
-                hole=0,
+                hole=0.25,
                 direction='clockwise',
                 sort=False,
                 showlegend=False
@@ -47,11 +46,16 @@ def generate_pie_chart_kpi(title, value, id):
     )
 
     figure.update_layout(
-        margin=dict(t=10, b=0, l=0, r=0),
-        title=dict(text=title, x=0.5, font=dict(size=14, color="black")),
+        margin=dict(t=50, b=0, l=0, r=0),  # Increased top margin
+        title=dict(
+            text=title,
+            x=0.5,
+            y=0.95,  # Controls vertical position
+            font=dict(size=16, color="black")  # Larger and more visible font
+        ),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        height=200
+        height=240  # Increased overall height
     )
 
     return dcc.Graph(id=id, figure=figure, config={"displayModeBar": False})

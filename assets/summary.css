@@ -1,3 +1,4 @@
+/* Title */
 .summary-title {
     text-align: center;
     font-size: 30px;
@@ -6,24 +7,27 @@
     font-weight: 400;
 }
 
+/* KPI row spacing */
 .kpi-row {
-    margin-bottom: 30px;
+    margin-bottom: 50px;
 }
 
+/* Pie chart column layout */
 .kpi-pie-chart {
     width: 100%;
     max-width: 200px;
     margin: auto;
 }
 
+/* Card styling */
 .metric-card {
     border-radius: 0.5rem;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    /* padding: 1rem; */
     text-align: center;
     height: 100px;
 }
 
+/* Metric titles & values */
 .metric-title {
     font-size: 1rem;
     font-weight: 600;
@@ -36,7 +40,7 @@
     color: white;
 }
 
-/* Color-coded cards */
+/* Color-coded KPI Cards */
 .card-total {
     background-color: #FF9B00;
 }
@@ -50,78 +54,59 @@
     color: #212529;
 }
 
-/* .card-performance {
-    background-color: #17a2b8;
-}
-
-.card-barcode {
-    background-color: #ffc107;
-    color: #212529;
-}
-
-.card-volume {
-    background-color: #6c757d;
-} */
-
 .card-throughput {
     background-color: #00ced1;
 }
 
-.custom-date-picker {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-}
-
+/* Date and time picker inputs */
+.custom-date-picker,
 .custom-time-input {
     width: 100%;
     padding: 10px;
     border-radius: 8px;
 }
 
-/* Row-specific styling for Pie KPIs */
-/* .pie-kpi-row {
+/* Pie KPI column styling */
+.pie-kpi-col {
+    height: auto;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Dash pie chart sizing */
+.pie-kpi-col .dash-graph {
+    width: 100% !important;
+    height: 240px !important; /* increased height for title spacing */
+    margin-top: 10px;
+}
+
+/* Custom card container for pie charts */
+.pie-chart-card {
+    background-color: #2b2f3e !important;
+    color: white;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 3px 8px rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+}
+
+/* Responsive row for pie charts (optional if you use it) */
+.pie-kpi-row {
     margin-top: 20px;
     margin-bottom: 20px;
     display: flex;
     gap: 10px;
     justify-content: center;
-} */
-
-.pie-kpi-col {
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(255, 255, 255, 0.1);
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 250px;
+    flex-wrap: nowrap; /* force single row */
 }
 
-.pie-kpi-col .dash-graph {
-    width: 100% !important;
-    height: 100% !important;
-}
-
-.pie-chart-card {
-    background-color: #2b2f3e !important;
-    color: white;
-    border-radius: 12px;
-    height: 230px;
-    padding: 10px;
-    box-shadow: 0 3px 8px rgba(255, 255, 255, 0.1);
-}
-
-.pie-row {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    gap: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
+/* Optional: legend-style pie chart labels */
 .pie-chart-title {
     font-size: 14px;
     font-weight: 600;
