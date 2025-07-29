@@ -5,7 +5,8 @@
 
 /* Tab Navbar: Slightly darker */
 .tab-navbar {
-    background-color: #e1f0ff !important;
+    background-color: #6495ed !important;
+    font-size: 14px;
 }
 
 /* Shared Styling */
@@ -13,6 +14,7 @@
 .custom-navbar .nav-link {
     color: #212529 !important;
     font-weight: 500;
+    font-size: 16px;
 }
 
 .custom-navbar .nav-link:hover {

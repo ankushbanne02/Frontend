@@ -1,0 +1,130 @@
+.summary-title {
+    text-align: center;
+    font-size: 30px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-weight: 400;
+}
+
+.kpi-row {
+    margin-bottom: 30px;
+}
+
+.kpi-pie-chart {
+    width: 100%;
+    max-width: 200px;
+    margin: auto;
+}
+
+.metric-card {
+    border-radius: 0.5rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    /* padding: 1rem; */
+    text-align: center;
+    height: 100px;
+}
+
+.metric-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+}
+
+/* Color-coded cards */
+.card-total {
+    background-color: #FF9B00;
+}
+
+.card-sorted {
+    background-color: #008080;
+}
+
+.card-overflow {
+    background-color: #dda0dd;
+    color: #212529;
+}
+
+/* .card-performance {
+    background-color: #17a2b8;
+}
+
+.card-barcode {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.card-volume {
+    background-color: #6c757d;
+} */
+
+.card-throughput {
+    background-color: #00ced1;
+}
+
+.custom-date-picker {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.custom-time-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Row-specific styling for Pie KPIs */
+/* .pie-kpi-row {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+} */
+
+.pie-kpi-col {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 250px;
+}
+
+.pie-kpi-col .dash-graph {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.pie-chart-card {
+    background-color: #2b2f3e !important;
+    color: white;
+    border-radius: 12px;
+    height: 230px;
+    padding: 10px;
+    box-shadow: 0 3px 8px rgba(255, 255, 255, 0.1);
+}
+
+.pie-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.pie-chart-title {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 4px;
+}
