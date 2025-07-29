@@ -1,14 +1,14 @@
-# import dash
-# from dash import dcc, html, dash_table
-# import plotly.express as px
-# import requests
-# import pandas as pd
-# import dash_bootstrap_components as dbc
+import dash
+from dash import dcc, html, dash_table
+import plotly.express as px
+import requests
+import pandas as pd
+import dash_bootstrap_components as dbc
 
-# volume_layout = html.Div([
-#     html.H2("📈 Volume Tab"),
-#     html.P("This is the Volume tab content.")
-# ])
+volume_layout = html.Div([
+    html.H2("📈 Volume Tab"),
+    html.P("This is the Volume tab content.")
+])
 
 
 # # ---------- Fetch data from FastAPI endpoint ---------- #
