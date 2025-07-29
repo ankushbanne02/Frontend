@@ -4,34 +4,16 @@ import dash_bootstrap_components as dbc
 
 from layouts.summary import summary_layout
 from layouts.throughput import throughput_layout
-
 from layouts.parcel_journey import parcel_journey_layout
 from layouts.volume import volume_layout
+from layouts.identification import identification_layout
+from layouts.recirculation import recirculation_layout
+
+from components.navbar import navbar  # import navbar
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
 app.title = "📦 Parcel Dashboard"
-
-# Custom Navbar with tabs aligned right
-navbar = dbc.Navbar(
-    dbc.Container([
-        dbc.NavbarBrand("Parcel Monitoring", href="/", className="fw-bold text-white"),
-
-        dbc.Nav(
-            [
-                dbc.NavItem(dbc.NavLink("Summary", href="/", className="ms-3 text-white")),
-                dbc.NavItem(dbc.NavLink("Throughput", href="/throughput", className="ms-3 text-white")),
-                dbc.NavItem(dbc.NavLink("Parcel Journey", href="/parcel-journey", className="ms-3 text-white")),
-                dbc.NavItem(dbc.NavLink("Volume", href="/volume", className="ms-3 text-white")),
-            ],
-            className="ms-auto",
-            navbar=True
-        )
-    ]),
-    color="primary",
-    dark=True,
-    sticky="top"
-)
 
 # App layout
 app.layout = html.Div([
@@ -45,10 +27,18 @@ app.layout = html.Div([
 def display_page(pathname):
     if pathname == '/throughput':
         return throughput_layout
+    elif pathname == '/identification':
+        return identification_layout
     elif pathname == '/parcel-journey':
         return parcel_journey_layout
     elif pathname == '/volume':
         return volume_layout
+    elif pathname == '/recirculation':
+        return recirculation_layout
+    elif pathname == '/chatbot':
+        return html.H3("Chatbot Coming Soon...", className="text-muted text-center mt-5")
+    elif pathname == '/login':
+        return html.H3("Login Page Placeholder", className="text-muted text-center mt-5")
     else:
         return summary_layout  # Default to summary
 

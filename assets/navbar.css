@@ -1,0 +1,21 @@
+/* Top Navbar */
+.custom-navbar {
+    background-color: #f5fbff !important;
+}
+
+/* Tab Navbar: Slightly darker */
+.tab-navbar {
+    background-color: #e1f0ff !important;
+}
+
+/* Shared Styling */
+.custom-navbar .navbar-brand,
+.custom-navbar .nav-link {
+    color: #212529 !important;
+    font-weight: 500;
+}
+
+.custom-navbar .nav-link:hover {
+    color: #87b0ef !important;
+    text-decoration: none;
+}
