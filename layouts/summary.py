@@ -65,9 +65,6 @@ def generate_pie_chart_kpi(title, value, id):
 
     return dcc.Graph(id=id, figure=figure, config={"displayModeBar": False})
 
-# # Initial data fetch
-# kpi_data = fetch_kpi_data()
-
 # Layout
 summary_layout = dbc.Container([
     html.H2("Summary", className="summary-title"),
@@ -143,39 +140,6 @@ summary_layout = dbc.Container([
 
     dcc.Interval(id='interval-component', interval=30*1000, n_intervals=0)
 ], fluid=True)
-
-#     # KPI Row 1
-#     dbc.Row([
-#         dbc.Col(dbc.Card(dbc.CardBody([
-#             html.H5("Total Parcels", className="metric-title"),
-#             html.H2("N/A", id="total-parcels-kpi", className="metric-value")
-#         ])), width=3),
-
-#         dbc.Col(dbc.Card(dbc.CardBody([
-#             html.H5("Sorted Parcels", className="metric-title"),
-#             html.H2("N/A", id="total-sorted-kpi", className="metric-value")
-#         ])), width=3),
-
-#         dbc.Col(dbc.Card(dbc.CardBody([
-#             html.H5("Overflow", className="metric-title"),
-#             html.H2("N/A", id="overflow-kpi", className="metric-value")
-#         ])), width=3),
-
-#         dbc.Col(dbc.Card(dbc.CardBody([
-#             html.H5("Throughput/hr", className="metric-title"),
-#             html.H2("N/A", id="throughput-kpi", className="metric-value")
-#         ])), width=3),
-#     ], className="kpi-row"),
-
-#     # KPI Pie Chart Row
-#     dbc.Row([
-#         dbc.Col(generate_pie_chart_kpi("Performance Rate", 0, "performance-kpi"), width=4),
-#         dbc.Col(generate_pie_chart_kpi("Barcode Read Rate", 0, "barcode-kpi"), width=4),
-#         dbc.Col(generate_pie_chart_kpi("Volume Read Rate", 0, "volume-kpi"), width=4),
-#     ], className="mb-4"),
-
-#     dcc.Interval(id='interval-component', interval=30*1000, n_intervals=0)
-# ], fluid=True)
 
 # Dash callback
 @callback(
