@@ -154,17 +154,34 @@ volume_layout = dbc.Container([
     prevent_initial_call=True
 )
 
+
 def update_volume_charts(n_clicks, selected_date):
     if not selected_date:
         return html.Div("Please select a date.", className="text-warning")
 
     try:
         data = fetch_volume_data(selected_date)
+
+        # Initial 3 charts
         height_chart = generate_bar_chart(data.get("height_distribution", {}), "Parcel Height Distribution [mm]", "Parcel Height (mm)")
         width_chart = generate_bar_chart(data.get("width_distribution", {}), "Parcel Width Distribution [mm]", "Parcel Width (mm)")
         length_chart = generate_bar_chart(data.get("length_distribution", {}), "Parcel Length Distribution [mm]", "Parcel Length (mm)")
 
-                # Compute KPI metrics
+        # Filter out zero or negative lengths
+        raw_length_dist = data.get("length_distribution", {})
+        filtered_length_dist = {
+            k: v for k, v in raw_length_dist.items()
+            if float(k) > 0 and v is not None
+        }
+
+        # Allocated Length Distribution (no zeros)
+        allocated_length_chart = generate_bar_chart(
+            filtered_length_dist,
+            "Parcel Allocated Length Distribution [mm]",
+            "Parcel Length (mm)"
+        )
+
+        # Compute KPI metrics
         pct_400, pct_600 = calculate_length_allocation_kpis(data.get("length_distribution", {}))
 
         return html.Div([
@@ -173,18 +190,25 @@ def update_volume_charts(n_clicks, selected_date):
                 dbc.Col(width_chart, width=4),
                 dbc.Col(length_chart, width=4),
             ]),
+
             html.Br(),
+
             html.H5("Dimension Summary Table", className="mt-4 mb-2 text-center"),
             generate_stats_table(
                 data.get("height_distribution", {}),
                 data.get("width_distribution", {}),
                 data.get("length_distribution", {})
             ),
+
             html.Br(),
+
             html.H5("Parcel Allocation KPIs (Length-Based)", className="mt-4 mb-2 text-center"),
             dbc.Row([
-                dbc.Col(generate_kpi_card("Parcels allocated under 400 mm", pct_400), width=6),
-                dbc.Col(generate_kpi_card("Parcels allocated under 600 mm", pct_600), width=6)
+                dbc.Col(allocated_length_chart, width=6),
+                dbc.Col([
+                    generate_kpi_card("Parcels allocated under 400 mm", pct_400),
+                    generate_kpi_card("Parcels allocated under 600 mm", pct_600)
+                ], width=6)
             ])
         ])
     
