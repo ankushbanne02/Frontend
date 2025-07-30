@@ -11,6 +11,7 @@ from layouts.recirculation import recirculation_layout
 
 from components.navbar import navbar  # import navbar
 
+from callbacks.parcel_journey_callbacks import register_parcel_journey_callbacks
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
 app.title = "📦 Parcel Dashboard"
@@ -22,6 +23,7 @@ app.layout = html.Div([
     html.Div(id='page-content', className='p-4')
 ])
 
+register_parcel_journey_callbacks(app)
 # Routing callback
 @app.callback(Output('page-content', 'children'), Input('url', 'pathname'))
 def display_page(pathname):
