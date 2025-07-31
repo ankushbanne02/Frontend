@@ -7,7 +7,7 @@ import datetime
 # Function to fetch KPI data from API
 def fetch_kpi_data(selected_date):
     try:
-        payload = {"date": selected_date}  # Use dynamic date input as needed
+        payload = {"date": selected_date} 
         response = requests.post("https://backend-vanderlande-1.onrender.com/summary", json=payload)
         response.raise_for_status()
         data = response.json()
@@ -76,30 +76,39 @@ summary_layout = dbc.Container([
         # dbc.Col(dbc.Input(id='end-time-picker', type='time', className='custom-time-input', value='23:59' ), width=2),
         dbc.Col(dbc.Button("Get Summary", id="submit-button", color="primary", className="w-100"), width=2)
     ], className="kpi-row"),
+    # After the submit button row
+    dbc.Row([
+        html.Div(id="no-data-message", style={
+            "color": "red", "fontWeight": "bold", "textAlign": "center", "marginTop": "10px"
+        })
+    ]),
+
 
     # ROW 1: Total, Sorted, Overflow
-    dbc.Row([
-        dbc.Col(dbc.Card(dbc.CardBody([
-            html.H5("Total Parcels", className="metric-title"),
-            html.H2(f"N/A", id="total-parcels-kpi", className="metric-value")
-        ]), className="metric-card card-total", inverse=True), width=3),
+    html.Div(id="kpi-section", children=[
+        dbc.Row([
+            dbc.Col(dbc.Card(dbc.CardBody([
+                html.H5("Total Parcels", className="metric-title"),
+                html.H2(f"N/A", id="total-parcels-kpi", className="metric-value")
+            ]), className="metric-card card-total", inverse=True), width=3),
 
-        dbc.Col(dbc.Card(dbc.CardBody([
-            html.H5("Sorted Parcels", className="metric-title"),
-            html.H2(f"N/A", id="total-sorted-kpi", className="metric-value")
-        ]), className="metric-card card-sorted", inverse=True), width=3),
+            dbc.Col(dbc.Card(dbc.CardBody([
+                html.H5("Sorted Parcels", className="metric-title"),
+                html.H2(f"N/A", id="total-sorted-kpi", className="metric-value")
+            ]), className="metric-card card-sorted", inverse=True), width=3),
 
-        dbc.Col(dbc.Card(dbc.CardBody([
-            html.H5("Overflow", className="metric-title"),
-            html.H2(f"N/A", id="overflow-kpi", className="metric-value")
-        ]), className="metric-card card-overflow", inverse=True), width=3),
+            dbc.Col(dbc.Card(dbc.CardBody([
+                html.H5("Overflow", className="metric-title"),
+                html.H2(f"N/A", id="overflow-kpi", className="metric-value")
+            ]), className="metric-card card-overflow", inverse=True), width=3),
 
-        dbc.Col(dbc.Card(dbc.CardBody([
-            html.H5("Throughput/hr", className="metric-title"),
-            html.H2(f"N/A", id="throughput-kpi", className="metric-value")
-        ]), className="metric-card card-throughput", inverse=True), width=3),
-        
-    ], className="kpi-row"),
+            dbc.Col(dbc.Card(dbc.CardBody([
+                html.H5("Throughput/hr", className="metric-title"),
+                html.H2(f"N/A", id="throughput-kpi", className="metric-value")
+            ]), className="metric-card card-throughput", inverse=True), width=3),
+            
+        ], className="kpi-row"),
+    ]),
 
     # # # ROW 2: Performance %, Barcode, Volume
     # dbc.Row([
@@ -120,23 +129,25 @@ summary_layout = dbc.Container([
     # ], className="kpi-row"),
 
     # Row 2: Pie Chart KPI Cards
-    dbc.Row([
-        dbc.Col(
-            generate_pie_chart_kpi("Performance Rate", 0, "performance-kpi"),
-            className="pie-kpi-col",
-            width=4
-        ),
-        dbc.Col(
-            generate_pie_chart_kpi("Barcode Read Rate", 0, "barcode-kpi"),
-            className="pie-kpi-col",
-            width=4
-        ),
-        dbc.Col(
-            generate_pie_chart_kpi("Volume Read Rate", 0, "volume-kpi"),
-            className="pie-kpi-col",
-            width=4
-        )
-    ], className="pie-kpi-row"),
+    html.Div(id="chart-section", children=[
+        dbc.Row([
+            dbc.Col(
+                generate_pie_chart_kpi("Performance Rate", 0, "performance-kpi"),
+                className="pie-kpi-col",
+                width=4
+            ),
+            dbc.Col(
+                generate_pie_chart_kpi("Barcode Read Rate", 0, "barcode-kpi"),
+                className="pie-kpi-col",
+                width=4
+            ),
+            dbc.Col(
+                generate_pie_chart_kpi("Volume Read Rate", 0, "volume-kpi"),
+                className="pie-kpi-col",
+                width=4
+            )
+        ], className="pie-kpi-row"),
+    ]),
 
     dcc.Interval(id='interval-component', interval=30*1000, n_intervals=0)
 ], fluid=True)
@@ -150,16 +161,21 @@ summary_layout = dbc.Container([
     Output("performance-kpi", "figure"),
     Output("barcode-kpi", "figure"),
     Output("volume-kpi", "figure"),
+    Output("kpi-section", "style"),
+    Output("chart-section", "style"),
     Input("submit-button", "n_clicks"),
     State("date-picker", "date"),
     prevent_initial_call=True
 )
 def update_kpi_cards(n_clicks, selected_date):
     if not selected_date:
-        return ["N/A"] * 4 + [go.Figure()] * 3
+        return ["N/A"] * 4 + [go.Figure()] * 3 + [{"display": "none"}, {"display": "none"}]
 
     data = fetch_kpi_data(selected_date)
 
+    if not data or all(data.get(k) in [0, "N/A", "Error", None] for k in data):
+        return [""] * 4 + [go.Figure()] * 3 + [{"display": "none"}, {"display": "none"}]
+    
     # Pie charts as figures
     try:
         perf_fig = generate_pie_chart_kpi("Performance Rate", data["performance_sorted"], "performance-kpi").figure
@@ -175,5 +191,7 @@ def update_kpi_cards(n_clicks, selected_date):
         data["throughput_per_hour"],
         perf_fig,
         barcode_fig,
-        volume_fig
+        volume_fig,
+        {"display": "block"},  # Show KPI section
+        {"display": "block"}   # Show Chart section
     )

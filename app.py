@@ -2,6 +2,7 @@ import dash
 from dash import dcc, html, Input, Output
 import dash_bootstrap_components as dbc
 
+# Importing layouts
 from layouts.summary import summary_layout
 from layouts.throughput import throughput_layout
 from layouts.parcel_journey import parcel_journey_layout
@@ -11,7 +12,10 @@ from layouts.recirculation import recirculation_layout
 
 from components.navbar import navbar  # import navbar
 
+# Importing callbacks
+import callbacks.volume_callbacks
 from callbacks.parcel_journey_callbacks import register_parcel_journey_callbacks
+
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
 app.title = "📦 Parcel Dashboard"
