@@ -6,9 +6,9 @@ import datetime
 import requests
 
 # Fetch throughput data
-def fetch_throughput_data(selected_date):
+def fetch_throughput_data(selected_date, bin_size):
     try:
-        payload = {"date": selected_date}
+        payload = {"date": selected_date, "bin_size": bin_size}
         response = requests.post("https://backend-vanderlande-gbq8.onrender.com/throughput", json=payload)
         response.raise_for_status()
         return response.json()
@@ -72,6 +72,19 @@ throughput_layout = dbc.Container([
             date=datetime.date.today(),
             display_format='YYYY-MM-DD'
         ), width=3),
+        dbc.Col(dcc.Dropdown(
+            id="throughput-bin-size",
+            options=[
+                {"label": "10 min", "value": 10},
+                {"label": "15 min", "value": 15},
+                {"label": "30 min", "value": 30},
+                {"label": "45 min", "value": 45},
+                {"label": "1 hour", "value": 60}
+            ],
+            value=10,  # default bin size
+            clearable=False,
+            placeholder="Select bin size"
+        ), width=2),
         dbc.Col(dbc.Button("Get Throughput", id="throughput-submit", color="primary", className="w-100"), width=2),
     ]),
 
@@ -86,13 +99,15 @@ throughput_layout = dbc.Container([
     Output("throughput-output", "children"),
     Input("throughput-submit", "n_clicks"),
     State("throughput-date-picker", "date"),
+    State("throughput-bin-size", "value"),
     prevent_initial_call=True
 )
-def update_throughput(n_clicks, selected_date):
+def update_throughput(n_clicks, selected_date, bin_size):
     if not selected_date:
         return html.Div("Please select a date.", className="text-warning")
 
-    data = fetch_throughput_data(selected_date)
+    data = fetch_throughput_data(selected_date, bin_size)
+
     if not data:
         return html.Div("No data received from server.", className="text-danger")
 
@@ -115,13 +130,15 @@ def update_throughput(n_clicks, selected_date):
         kpi_cards = dbc.Row([
             dbc.Col(generate_kpi("Total Parcels IN", data.get("total_in", 0), "#dda0dd"), width=3),
             dbc.Col(generate_kpi("Total Parcels OUT", data.get("total_out", 0), "#008080"), width=3),
-            dbc.Col(generate_kpi("Avg Parcels IN / 10min", avg_in), width=3),
-            dbc.Col(generate_kpi("Avg Parcels OUT / 10min", avg_out), width=3),
+            dbc.Col(generate_kpi(f"Avg Parcels IN / {bin_size}min", avg_in), width=3),
+            dbc.Col(generate_kpi(f"Avg Parcels OUT / {bin_size}min", avg_out), width=3),
+
         ])
 
         # Area charts
-        in_chart = create_area_chart(in_data, "Parcels IN Over Time", "#198754")
-        out_chart = create_area_chart(out_data, "Parcels OUT Over Time", "#dc3545")
+        in_chart = create_area_chart(in_data, f"Parcels IN Every {bin_size} Minutes", "#198754")
+        out_chart = create_area_chart(out_data, f"Parcels OUT Every {bin_size} Minutes", "#dc3545")
+
 
         return html.Div([
             kpi_cards,
@@ -134,34 +151,3 @@ def update_throughput(n_clicks, selected_date):
     except Exception as e:
         print(f"Error in callback: {e}")
         return html.Div("Error displaying throughput data.", className="text-danger")    
-    # try:
-    #     # Calculate averages dynamically
-    #     in_values = list(data.get("parcels_in_time", {}).values())
-    #     out_values = list(data.get("parcels_out_time", {}).values())
-
-    #     avg_in = round(sum(in_values) / len(in_values), 2) if in_values else 0
-    #     avg_out = round(sum(out_values) / len(out_values), 2) if out_values else 0
-
-    #     # KPIs
-    #     kpi_cards = dbc.Row([
-    #         dbc.Col(generate_kpi("Total Parcels IN", data.get("total_in", 0), "#dda0dd"), width=3),
-    #         dbc.Col(generate_kpi("Total Parcels OUT", data.get("total_out", 0), "#008080"), width=3),
-    #         dbc.Col(generate_kpi("Avg Parcels IN / 10min", data.get("avg_in", 0)), width=3),
-    #         dbc.Col(generate_kpi("Avg Parcels OUT / 10min", data.get("avg_out", 0)), width=3),
-    #     ])
-
-    #     # Area charts
-    #     in_chart = create_area_chart(data.get("parcels_in_time", {}), "Parcels IN Over Time", "#198754")
-    #     out_chart = create_area_chart(data.get("parcels_out_time", {}), "Parcels OUT Over Time", "#dc3545")
-
-    #     return html.Div([
-    #         kpi_cards,
-    #         html.Hr(),
-    #         dbc.Row([
-    #             dbc.Col(in_chart, width=6),
-    #             dbc.Col(out_chart, width=6),
-    #         ])
-    #     ])
-    # except Exception as e:
-    #     print(f"Error in callback: {e}")
-    #     return html.Div("Error displaying throughput data.", className="text-danger")
