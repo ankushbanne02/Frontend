@@ -18,7 +18,7 @@ import numpy as np
 def fetch_volume_data(selected_date):
     try:
         payload = {"date": selected_date}
-        response = requests.post("https://backend-vanderlande-1.onrender.com/volume", json=payload)
+        response = requests.post("https://backend-vanderlande-3jss.onrender.com/volume", json=payload)
         response.raise_for_status()
         return response.json()
     except Exception as e:
