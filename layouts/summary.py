@@ -8,13 +8,13 @@ import datetime
 def fetch_kpi_data(selected_date):
     try:
         payload = {"date": selected_date} 
-        response = requests.post("https://backend-vanderlande-1.onrender.com/summary", json=payload)
+        response = requests.post("https://backend-vanderlande-3jss.onrender.com/summary", json=payload)
         response.raise_for_status()
         data = response.json()
 
         return {
             "total_parcels": data.get("total_parcels", "N/A"),
-            "total_sorted": data.get("sorted_good", "N/A"),
+            "total_sorted": data.get("sorted_parcels", "N/A"),
             "overflow": data.get("overflow", "N/A"),
             "performance_sorted": data.get("tracking_performance_percent", "N/A"),
             "barcode_read_rate": data.get("barcode_read_ratio_percent", "N/A"),
