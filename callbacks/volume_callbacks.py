@@ -1,64 +1,105 @@
-from dash import html, Input, Output, State, callback
+import requests
+import plotly.graph_objs as go
+from dash import dcc, html, dash_table
+import pandas as pd
 import dash_bootstrap_components as dbc
-from utils.volume_utils import (
-    fetch_volume_data,
-    generate_bar_chart,
-    generate_normal_distribution_chart,
-    generate_stats_table,
-    calculate_length_allocation_kpis,
-    generate_kpi_card
-)
+import numpy as np
 
-@callback(
-    Output("volume-graphs-output", "children"),
-    Input("volume-submit", "n_clicks"),
-    State("volume-date-picker", "date"),
-    State("volume-start-time-picker", "value"),
-    State("volume-end-time-picker", "value"),
-    State("graph-type-dropdown", "value"),
-    prevent_initial_call=True
-)
-def update_volume_charts(n_clicks, selected_date, start_time, end_time, graph_type):
-    if not selected_date:
-        return html.Div("Please select a date.", className="text-warning")
-
+def fetch_volume_data(selected_date):
     try:
-        data = fetch_volume_data(selected_date)
-        if not any(data.get(k) for k in ["height_distribution", "width_distribution", "length_distribution"]):
-            return html.Div("No data available for the selected date.", className="text-danger")
-
-        chart_func = generate_bar_chart if graph_type == "histogram" else generate_normal_distribution_chart
-
-        height_chart = chart_func(data.get("height_distribution", {}), "Parcel Height", "Height (mm)")
-        width_chart = chart_func(data.get("width_distribution", {}), "Parcel Width", "Width (mm)")
-        length_chart = chart_func(data.get("length_distribution", {}), "Parcel Length", "Length (mm)")
-
-        filtered_length_dist = {
-            k: v for k, v in data.get("length_distribution", {}).items()
-            if float(k) > 0 and v is not None
-        }
-
-        allocated_chart = generate_bar_chart(filtered_length_dist, "Length Allocation", "Length (mm)")
-
-        pct_400, pct_600 = calculate_length_allocation_kpis(data.get("length_distribution", {}))
-
-        return html.Div([
-            dbc.Row([dbc.Col(height_chart, 4), dbc.Col(width_chart, 4), dbc.Col(length_chart, 4)]),
-            html.Br(),
-            html.H5("Dimension Summary Table", className="mt-4 mb-2 text-center"),
-            generate_stats_table(
-                data.get("height_distribution", {}),
-                data.get("width_distribution", {}),
-                data.get("length_distribution", {})
-            ),
-            html.Br(),
-            html.H5("Parcel Allocation KPIs", className="mt-4 mb-2 text-center"),
-            dbc.Row([
-                dbc.Col(allocated_chart, width=6),
-                dbc.Col([generate_kpi_card("Parcels under 400mm", pct_400),
-                         generate_kpi_card("Parcels above 600mm", pct_600)], width=6)
-            ])
-        ])
+        payload = {"date": selected_date}
+        response = requests.post("https://backend-vanderlande-1.onrender.com/volume", json=payload)
+        response.raise_for_status()
+        return response.json()
     except Exception as e:
-        print(f"Error: {e}")
-        return html.Div("Failed to load charts.", className="text-danger")
+        print(f"API error: {e}")
+        return {}
+
+def generate_bar_chart(data_dict, title, xaxis_label, bin_size=50, max_bin=1200):
+    try:
+        parsed_data = [(float(k), int(v)) for k, v in data_dict.items() if v is not None]
+        num_bins = int(max_bin / bin_size)
+        bins = {f"{i * bin_size}-{(i + 1) * bin_size}": 0 for i in range(num_bins)}
+
+        for value, count in parsed_data:
+            bin_index = int(value // bin_size)
+            bin_label = f"{bin_index * bin_size}-{(bin_index + 1) * bin_size}"
+            if bin_label in bins:
+                bins[bin_label] += count
+
+        bins = {k: v for k, v in bins.items() if v > 0}
+        x = list(bins.keys())
+        y = list(bins.values())
+
+        fig = go.Figure([go.Bar(x=x, y=y, marker_color='#17a2b8')])
+        fig.update_layout(title=title, xaxis_title=xaxis_label, yaxis_title="Parcel Count", height=350)
+        return dcc.Graph(figure=fig, config={"displayModeBar": False})
+    except Exception as e:
+        print(f"Bar chart error: {e}")
+        return html.Div("Bar chart generation failed.")
+
+def generate_normal_distribution_chart(data_dict, title, xaxis_label):
+    try:
+        values = [float(k) for k, v in data_dict.items() for _ in range(int(v)) if float(k) > 0 and v is not None]
+        if not values:
+            return html.Div(f"No data available for {title}", className="text-danger")
+
+        mean = np.mean(values)
+        std = np.std(values)
+        x = np.linspace(min(values), max(values), 100)
+        y = (1 / (std * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mean) / std) ** 2)
+
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name='Normal Dist'))
+        fig.update_layout(title=title, xaxis_title=xaxis_label, yaxis_title='Probability', height=350)
+        return dcc.Graph(figure=fig, config={"displayModeBar": False})
+    except Exception as e:
+        print(f"Normal dist error: {e}")
+        return html.Div("Normal distribution generation failed.")
+
+def compute_stats(data_dict):
+    try:
+        values = [float(k) for k in data_dict.keys() if float(k) > 0]
+        return min(values), round(np.mean(values), 1), max(values) if values else ("N/A", "N/A", "N/A")
+    except:
+        return ("Error", "Error", "Error")
+
+def generate_stats_table(height_dict, width_dict, length_dict):
+    h_min, h_avg, h_max = compute_stats(height_dict)
+    w_min, w_avg, w_max = compute_stats(width_dict)
+    l_min, l_avg, l_max = compute_stats(length_dict)
+
+    df = pd.DataFrame([
+        {"Parameter": "Height", "Min (mm)": h_min, "Avg (mm)": h_avg, "Max (mm)": h_max},
+        {"Parameter": "Width", "Min (mm)": w_min, "Avg (mm)": w_avg, "Max (mm)": w_max},
+        {"Parameter": "Length", "Min (mm)": l_min, "Avg (mm)": l_avg, "Max (mm)": l_max},
+    ])
+
+    return dash_table.DataTable(
+        columns=[{"name": i, "id": i} for i in df.columns],
+        data=df.to_dict("records"),
+        style_table={"marginTop": "20px"},
+        style_cell={"textAlign": "center", "padding": "5px"},
+        style_header={"backgroundColor": "#343a40", "color": "white", "fontWeight": "bold"},
+        style_data={"backgroundColor": "#f8f9fa", "color": "#212529"}
+    )
+
+def calculate_length_allocation_kpis(length_dict):
+    parsed = [(float(k), int(v)) for k, v in length_dict.items() if float(k) > 0 and v is not None]
+    total = sum(v for _, v in parsed)
+    under_400 = sum(v for k, v in parsed if k < 400)
+    above_600 = sum(v for k, v in parsed if k > 600)
+
+    pct_400 = round(100 * under_400 / total, 2) if total else 0
+    pct_600 = round(100 * above_600 / total, 2) if total else 0
+    return pct_400, pct_600
+
+def generate_kpi_card(title, value):
+    return dbc.Card(
+        dbc.CardBody([
+            html.Div(title, className="kpi-label"),
+            html.H2(f"{value:.2f} %", className="kpi-value")
+        ]),
+        style={"backgroundColor": "#f4731c", "color": "white", "textAlign": "center", "height": "120px"},
+        className="mb-2"
+    )

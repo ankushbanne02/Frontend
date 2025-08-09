@@ -15,6 +15,7 @@ from components.navbar import navbar  # import navbar
 # Importing callbacks
 import callbacks.volume_callbacks
 from callbacks.parcel_journey_callbacks import register_parcel_journey_callbacks
+import callbacks.summary_callbacks
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)

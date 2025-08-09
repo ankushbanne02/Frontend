@@ -7,9 +7,23 @@
     font-weight: 400;
 }
 
-/* KPI row spacing */
+/* KPI row as flex for equal width */
 .kpi-row {
     margin-bottom: 50px;
+    display: flex;
+    gap: 15px; /* spacing between cards */
+    justify-content: space-between;
+    flex-wrap: wrap; /* wrap on small screens */
+}
+
+.kpi-row .metric-card {
+    flex: 1; /* equal width */
+    min-width: 180px; /* prevents shrinking too much on small screens */
+}
+
+/* Keep date & time picker row normal */
+.kpi-input-row {
+    margin-bottom: 20px;
 }
 
 /* Pie chart column layout */
@@ -56,6 +70,12 @@
 
 .card-throughput {
     background-color: #00ced1;
+}
+
+/* New color for white KPI card (In System) */
+.card-in-system {
+    background-color: #8f4040; /* steel blue */
+    color: white;
 }
 
 /* Date and time picker inputs */
