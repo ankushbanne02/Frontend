@@ -50,7 +50,7 @@ throughput_layout = dbc.Container([
     ], className="mb-4"),
 
     # KPI Section
-    html.Div(id="throughput-kpi-section", className="kpi-row"),
+    html.Div(id="throughput-kpi-section", className="throughput-kpi-row"),
 
     # Charts Section
     html.Div(id="throughput-chart-section", className="throughput-charts-row")

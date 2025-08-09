@@ -7,20 +7,16 @@
     font-weight: 400;
 }
 
-/* ===== KPI Row ===== */
+/* ===== KPI Section Responsive Layout ===== */
 .throughput-kpi-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    gap: 15px;
-    margin-bottom: 40px;
-    flex-wrap: wrap; /* wrap on small screens */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin-bottom: 50px; /* more space before charts */
 }
 
 /* ===== KPI Card Styling ===== */
 .metric-card {
-    flex: 1;
-    min-width: 180px; /* keeps cards from shrinking too small */
     border-radius: 0.5rem;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -30,12 +26,25 @@
     justify-content: center;
 }
 
+/* Normalize CardBody padding & alignment */
+.metric-card .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+}
+
+/* KPI Title Styling */
 .metric-title {
     font-size: 1rem;
     font-weight: 600;
     color: white;
+    white-space: normal;
+    word-break: break-word;
+    margin-bottom: 5px;
 }
 
+/* KPI Value Styling */
 .metric-value {
     font-size: 2rem;
     font-weight: 700;
@@ -60,19 +69,14 @@
     background-color: #00ced1;
 }
 
+/* ===== Charts Section Responsive Layout ===== */
 .throughput-charts-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
 }
 
 .throughput-charts-row > div {
-    flex: 1;
-    min-width: 400px;
-    max-width: 50%;
-    height: 400px; /* Fixed height to stop endless resizing */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%;
+    height: 400px;
 }

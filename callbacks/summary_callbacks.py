@@ -18,14 +18,14 @@ from utils.summary_utils import fetch_summary_data, generate_pie_chart_kpi
     Input("end-time", "value")
 )
 def update_kpi_cards(selected_date, start_time, end_time):
-    if not selected_date or not start_time or not end_time:
-        return ["N/A"] * 5 + [go.Figure()] * 3 + [{"display": "none"}, {"display": "none"}]
+    # if not selected_date or not start_time or not end_time:
+    #     return ["N/A"] * 5 + [go.Figure()] * 3 + [{"display": "none"}, {"display": "none"}]
 
     # Fetch data from backend
     data = fetch_summary_data(selected_date, start_time, end_time)
 
-    if not data or all(data.get(k) in [0, "N/A", "Error", None] for k in data):
-        return [""] * 5 + [go.Figure()] * 3 + [{"display": "none"}, {"display": "none"}]
+    # if not data or all(data.get(k) in [0, "N/A", "Error", None] for k in data):
+    #     return [""] * 5 + [go.Figure()] * 3 + [{"display": "none"}, {"display": "none"}]
 
     # Create pie chart figures
     perf_fig = generate_pie_chart_kpi("Performance Rate", data.get("tracking_performance_percent", 0), "performance-kpi").figure
