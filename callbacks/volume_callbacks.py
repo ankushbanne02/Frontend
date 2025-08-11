@@ -8,7 +8,8 @@ from utils.volume_utils import (
     generate_kpi_card
 )
 
-API_URL = "https://backend-vanderlande-3jss.onrender.com/volume"  # Change to your backend URL
+# API_URL = "https://backend-vanderlande-3jss.onrender.com/volume"  # Change to your backend URL
+API_URL = "http://127.0.0.1:8000/volume" # Local development URL
 
 
 @callback(

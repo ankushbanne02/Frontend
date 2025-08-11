@@ -12,8 +12,8 @@ def fetch_summary_data(selected_date, start_time, end_time):
         }
         print("Sending to API:", payload)
 
-        response = requests.post("https://backend-vanderlande-3jss.onrender.com/summary", json=payload)
-        response.raise_for_status()
+        response = requests.post("http://127.0.0.1:8000/summary", json=payload)
+        # response = requests.post("https://backend-vanderlande-3jss.onrender.com/summary", json=payload)
 
         data = response.json()
         print("Received from API:", data)

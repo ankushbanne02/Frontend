@@ -12,7 +12,8 @@ def fetch_throughput_data(selected_date, bin_size, start_time, end_time):
             "start_time": start_time,
             "end_time": end_time
         }
-        response = requests.post("https://backend-vanderlande-3jss.onrender.com/throughput", json=payload)
+        response = requests.post("http://127.0.0.1:8000/throughput", json=payload)
+        # response = requests.post("https://backend-vanderlande-3jss.onrender.com/throughput", json=payload)
         response.raise_for_status()
         return response.json()
     except Exception as e:
